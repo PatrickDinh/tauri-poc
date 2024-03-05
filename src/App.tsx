@@ -2,6 +2,9 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
+import { open, save } from '@tauri-apps/api/dialog';
+import { writeTextFile } from "@tauri-apps/api/fs";
+import { Command, open as openShell } from '@tauri-apps/api/shell';
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -10,6 +13,56 @@ function App() {
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     setGreetMsg(await invoke("greet", { name }));
+  }
+
+  async function openFile() {
+    await open({
+      multiple: true,
+      filters: [{
+        name: 'Image',
+        extensions: ['png', 'jpeg']
+      }]
+    });
+  }
+
+  async function saveTextToFile() {
+    const filePath = await save({
+      filters: [{
+        name: 'Text',
+        extensions: ['txt']
+      }]
+    });
+    if (filePath)
+      await writeTextFile(filePath, 'Hello World!');
+  }
+
+  async function openVsCodeAtPath() {
+    const dirPath = await open({
+      multiple: false,
+      directory: true
+    });
+
+    if (dirPath && !Array.isArray(dirPath)) {
+      const command = new Command('code', dirPath)
+      command.on('close', data => {
+        console.log(`command finished with code ${data.code} and signal ${data.signal}`)
+      });
+      command.on('error', error => console.error(`command error: "${error}"`));
+
+      const child = await command.spawn();
+      console.log('pid:', child.pid);
+    }
+  }
+
+  async function callAlgokitCli() {
+    const command = new Command('algokit', ['--version'])
+    command.on('close', data => {
+      console.log(`command finished with code ${data.code} and signal ${data.signal}`)
+    });
+    command.on('error', error => console.error(`command error: "${error}"`));
+    command.stdout.on('data', line => console.log(`command stdout: "${line}"`));
+    command.stderr.on('data', line => console.log(`command stderr: "${line}"`));
+    await command.execute();
   }
 
   return (
@@ -46,6 +99,10 @@ function App() {
       </form>
 
       <p>{greetMsg}</p>
+      <button type="button" onClick={openFile}>Open file</button>
+      <button type="button" onClick={saveTextToFile}>Save Text</button>
+      <button type="button" onClick={openVsCodeAtPath}>Open VSCode</button>
+      <button type="button" onClick={callAlgokitCli}>Call Algokit CLI version</button>
     </div>
   );
 }

@@ -13,8 +13,25 @@
     "allowlist": {
       "all": false,
       "shell": {
-        "all": false,
-        "open": true
+        "all": true,
+        "scope": [
+          {
+            "name": "code",
+            "cmd": "code",
+            "args": true
+          },
+          {
+            "name": "algokit",
+            "cmd": "algokit",
+            "args": true
+          }
+        ]
+      },
+      "fs": {
+        "all": true
+      },
+      "dialog": {
+        "all": true
       }
     },
     "windows": [
