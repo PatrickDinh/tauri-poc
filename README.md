@@ -1,7 +1,9 @@
 # Tauri + React + Typescript
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+This proof of concept for a Tauri app that can:
+- Open a file.
+- Save text to a file.
+- Open VSCode at a directory.
+- Call algokit version.
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+This app can run in the web without any desktop functionality.

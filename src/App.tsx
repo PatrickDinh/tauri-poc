@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import { open, save } from '@tauri-apps/api/dialog';
 import { writeTextFile } from "@tauri-apps/api/fs";
-import { Command, open as openShell } from '@tauri-apps/api/shell';
+import { Command } from '@tauri-apps/api/shell';
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
+
+  const isInApp = useMemo(() => '__TAURI__' in window, [])
 
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -99,10 +101,14 @@ function App() {
       </form>
 
       <p>{greetMsg}</p>
-      <button type="button" onClick={openFile}>Open file</button>
-      <button type="button" onClick={saveTextToFile}>Save Text</button>
-      <button type="button" onClick={openVsCodeAtPath}>Open VSCode</button>
-      <button type="button" onClick={callAlgokitCli}>Call Algokit CLI version</button>
+      { isInApp &&
+        <>
+          <button type="button" onClick={openFile}>Open file</button>
+          <button type="button" onClick={saveTextToFile}>Save Text</button>
+          <button type="button" onClick={openVsCodeAtPath}>Open VSCode</button>
+          <button type="button" onClick={callAlgokitCli}>Call Algokit CLI version</button>
+        </>
+      }
     </div>
   );
 }
