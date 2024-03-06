@@ -1,21 +1,13 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import { open, save } from '@tauri-apps/api/dialog';
 import { writeTextFile } from "@tauri-apps/api/fs";
 import { Command } from '@tauri-apps/api/shell';
+import axios from 'axios';
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
-
   const isInApp = useMemo(() => '__TAURI__' in window, [])
-
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
 
   async function openFile() {
     await open({
@@ -67,6 +59,10 @@ function App() {
     await command.execute();
   }
 
+  async function postToPostBin() {
+    await axios.post('https://example.com')
+  }
+
   return (
     <div className="container">
       <h1>Welcome to Tauri!</h1>
@@ -85,22 +81,6 @@ function App() {
 
       <p>Click on the Tauri, Vite, and React logos to learn more.</p>
 
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-
-      <p>{greetMsg}</p>
       { isInApp &&
         <>
           <button type="button" onClick={openFile}>Open file</button>
@@ -109,6 +89,7 @@ function App() {
           <button type="button" onClick={callAlgokitCli}>Call Algokit CLI version</button>
         </>
       }
+      <button type="button" onClick={postToPostBin}>Post to PostBin</button>
     </div>
   );
 }
