@@ -23,12 +23,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: install Rust stable
-        uses: actions-rs/toolchain@v1
+      - name: setup node
+        uses: actions/setup-node@v4
         with:
-          toolchain: stable
+          node-version: 20
 
-      - name: install webkit2gtk (ubuntu only)
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
         run: |
           sudo apt-get update
